@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wholesale checkout | Her Accessori Wholesale</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <a href="index.html" class="brand"><img class="logo-img" src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png" alt="Her Accessori Wholesale logo">Her <span class="dot">Accessori</span> <span style="font-size:13px;color:var(--muted)">· wholesale</span></a>
+    <nav class="main">
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="hbtns">
+      <select class="currency-select" id="curSel" title="Currency"></select>
+      <button class="theme-toggle" id="themeToggle" title="Switch to black mode">🌙</button>
+      <button class="cart-btn" id="cartBtn" title="Your cart">🛍️<span class="cart-count">0</span></button>
+      <button class="menu-btn" id="menuBtn" title="Menu">☰</button>
+      <button class="profile-btn" id="profileBtn" title="Your profile, cart and orders">👤</button>
+    </div>
+  </div>
+  <div class="menu-panel" id="menuPanel">
+    <nav>
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="menu-controls"></div>
+  </div>
+</header>
+
+<div class="page page-wide">
+  <div class="card" id="checkoutCard">
+    <h1>Wholesale checkout</h1>
+    <p class="sub">Your stock, delivered. Payment on arrival.</p>
+
+    <div id="orderSummary"></div>
+
+    <h2 class="serif" style="font-size:24px;margin:24px 0 12px">Delivery details</h2>
+    <div class="f-group"><label>Your name</label><input id="cName" type="text"></div>
+    <div class="f-group"><label>Phone (for delivery)</label><input id="cPhone" type="tel" placeholder="07.."></div>
+    <div class="f-group"><label>Delivery area</label>
+      <select id="cArea">
+        <option value="Rosslyn">Rosslyn (free delivery)</option>
+        <option value="Runda">Runda (free delivery)</option>
+        <option value="Ruaka">Ruaka (free delivery)</option>
+        <option value="Other">Other areas (fee confirmed on dispatch)</option>
+      </select>
+    </div>
+    <div class="f-group"><label>Shop address / directions</label><textarea id="cAddr" placeholder="Estate, street, shop or gate description"></textarea></div>
+
+    <div class="pay-note">
+      💳 <strong>Pay on delivery.</strong> No payment now. When your stock arrives you can settle via
+      <strong>M-Pesa or mobile money</strong>. If you prefer card, an online payment link arrives with your invoice at dispatch.
+    </div>
+
+    <div class="total-row grand"><span>Grand total</span><span id="grandTotal"></span></div>
+    <button class="btn-main" id="placeBtn">Place wholesale order</button>
+  </div>
+
+  <!-- confirmation -->
+  <div class="card" id="doneCard" style="display:none;text-align:center">
+    <div style="font-size:52px">📦</div>
+    <h1>Wholesale order placed</h1>
+    <p class="sub">Your reference number</p>
+    <div class="ref serif" id="refNum" style="font-size:34px;margin:6px 0 18px"></div>
+    <p style="font-size:15px;max-width:420px;margin:0 auto 8px">Save this reference. Your invoice and payment details reach you when the order is dispatched. Payment is on delivery, via M-Pesa or mobile money.</p>
+    <button class="bolt-btn" id="boltBtn">🚕 Need it faster? Order a Bolt</button>
+    <p style="margin-top:18px"><a href="account.html#orders" style="color:var(--accent)">View your order history →</a> &nbsp;·&nbsp; <a href="index.html" style="color:var(--accent)">Back to wholesale</a></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+requireLogin();
+const u = me();
+document.getElementById('cName').value = u.full_name || '';
+document.getElementById('cPhone').value = u.phone || '';
+
+const c = cart();
+if (!c.length) location.href = 'index.html';
+const subtotal = c.reduce((s, i) => s + i.priceUSD * i.qty, 0);
+const isFree = ['Rosslyn', 'Runda', 'Ruaka'];
+const fee = () => isFree.includes(document.getElementById('cArea').value) ? 0 : 5; /* FILL IN: outside-area fee, confirmed at dispatch */
+
+function renderSummary() {
+  document.getElementById('orderSummary').innerHTML = c.map(i => `
+    <div class="cart-line">
+      <img src="${i.image}" alt="">
+      <div style="flex:1"><div class="p-name" style="font-size:18px">${i.name}</div><span data-usd="${i.priceUSD}"></span> × ${i.qty}</div>
+    </div>`).join('')
+    + `<div class="total-row"><span>Subtotal</span><span data-usd="${subtotal}"></span></div>
+       <div class="total-row"><span>Delivery</span><span id="feeCell">${fee() === 0 ? 'Free' : ''}</span></div>`;
+  const f = fee();
+  document.getElementById('feeCell').dataset.usd = f;
+  document.getElementById('feeCell').textContent = f === 0 ? 'Free' : '';
+  const gt = document.getElementById('grandTotal');
+  gt.dataset.usd = subtotal + f;
+  refreshPrices();
+}
+document.getElementById('cArea').onchange = renderSummary;
+renderSummary();
+
+document.getElementById('placeBtn').onclick = async () => {
+  const name = document.getElementById('cName').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  const addr = document.getElementById('cAddr').value.trim();
+  if (!name || !phone || !addr) { alert('Please fill in name, phone and delivery address.'); return; }
+  const btn = document.getElementById('placeBtn'); btn.disabled = true; btn.textContent = 'Placing order…';
+  const f = fee();
+  try {
+    const r = await fetch(API + '/hwShop', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'order', email: u.email,
+        customer_name: name, phone, address: addr,
+        delivery_area: document.getElementById('cArea').value,
+        delivery_fee: f, items: c.map(i => ({ id: i.id, name: i.name, priceUSD: i.priceUSD, qty: i.qty })), total_usd: subtotal + f
+      }) });
+    const j = await r.json();
+    if (!j.ok) { alert(j.error || 'Could not place order.'); btn.disabled = false; btn.textContent = 'Place wholesale order'; return; }
+    saveCart([]);
+    document.getElementById('checkoutCard').style.display = 'none';
+    document.getElementById('doneCard').style.display = 'block';
+    document.getElementById('refNum').textContent = j.reference;
+    window.scrollTo(0, 0);
+  } catch (e) {
+    alert('Connection problem. Please try again.');
+    btn.disabled = false; btn.textContent = 'Place wholesale order';
+  }
+};
+
+/* Bolt: open the app, fall back to the site */
+document.getElementById('boltBtn').onclick = () => {
+  const t0 = Date.now();
+  location.href = 'bolt://';
+  setTimeout(() => { if (Date.now() - t0 < 2200) window.open('https://bolt.eu/en/kenya/', '_blank'); }, 1200);
+};
+</script>
+</body>
+</html>

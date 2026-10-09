@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in | Her Accessori Wholesale</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <a href="index.html" class="brand"><img class="logo-img" src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png" alt="Her Accessori Wholesale logo">Her <span class="dot">Accessori</span> <span style="font-size:13px;color:var(--muted)">&middot; wholesale</span></a>
+    <nav class="main">
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="hbtns">
+      <select class="currency-select" id="curSel" title="Currency"></select>
+      <button class="theme-toggle" id="themeToggle" title="Switch to black mode">🌙</button>
+      <button class="cart-btn" id="cartBtn" title="Your cart">🛍️<span class="cart-count">0</span></button>
+      <button class="menu-btn" id="menuBtn" title="Menu">☰</button>
+      <button class="profile-btn" id="profileBtn" title="Your profile, cart and orders">👤</button>
+    </div>
+  </div>
+  <div class="menu-panel" id="menuPanel">
+    <nav>
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="menu-controls"></div>
+  </div>
+</header>
+
+<div class="page">
+  <div class="card">
+    <h1>Welcome back</h1>
+    <p class="sub" id="toggleSub">New here? Create your wholesale account below.</p>
+    <div class="msg err" id="msgBox"></div>
+    <div class="f-group" id="nameGroup" style="display:none">
+      <label>Full name</label>
+      <input id="fName" type="text" placeholder="Your name">
+    </div>
+    <div class="f-group" id="phoneGroup" style="display:none">
+      <label>Phone</label>
+      <input id="fPhone" type="tel" placeholder="07..">
+    </div>
+    <div class="f-group">
+      <label>Email</label>
+      <input id="fEmail" type="email" placeholder="you@email.com">
+    </div>
+    <div class="f-group">
+      <label>Password</label>
+      <input id="fPass" type="password" placeholder="••••••••">
+    </div>
+    <button class="btn-main" id="submitBtn">Log in</button>
+    <p style="text-align:center;margin-top:16px;font-size:14px;color:var(--muted)">
+      <a href="#" id="toggleLink" style="color:var(--accent)">Create an account</a>
+    </p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+let mode = 'login';
+const msg = document.getElementById('msgBox');
+function show(text, ok) { msg.textContent = text; msg.className = 'msg ' + (ok ? 'ok' : 'err'); msg.style.display = 'block'; }
+
+document.getElementById('toggleLink').onclick = (e) => {
+  e.preventDefault();
+  mode = mode === 'login' ? 'register' : 'login';
+  document.getElementById('nameGroup').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('phoneGroup').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('submitBtn').textContent = mode === 'login' ? 'Log in' : 'Create account';
+  document.getElementById('toggleSub').textContent = mode === 'login' ? 'New here? Create your wholesale account below.' : 'Already with us? Log in below.';
+  document.getElementById('toggleLink').textContent = mode === 'login' ? 'Create an account' : 'Log in instead';
+  msg.style.display = 'none';
+};
+
+document.getElementById('submitBtn').onclick = async () => {
+  const email = document.getElementById('fEmail').value.trim();
+  const pass = document.getElementById('fPass').value;
+  if (!email || !pass) return show('Please enter your email and password.', false);
+  document.getElementById('submitBtn').disabled = true;
+  try {
+    const r = await fetch(API + '/hwAuth', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: mode,
+        email, password: pass,
+        full_name: document.getElementById('fName').value.trim(),
+        phone: document.getElementById('fPhone').value.trim()
+      })
+    });
+    const j = await r.json();
+    if (!j.ok) { show(j.error || 'Something went wrong.', false); document.getElementById('submitBtn').disabled = false; return; }
+    localStorage.setItem('hw_user', JSON.stringify({ email: j.user.email, full_name: j.user.full_name || '', phone: j.user.phone || '' }));
+    const next = localStorage.getItem('hw_after_login') || 'index.html';
+    localStorage.removeItem('hw_after_login');
+    location.href = next;
+  } catch (e) {
+    show('Connection problem. Please try again.', false);
+    document.getElementById('submitBtn').disabled = false;
+  }
+};
+
+/* already logged in? go straight in - never ask twice */
+if (me()) {
+  const next = localStorage.getItem('hw_after_login') || 'index.html';
+  localStorage.removeItem('hw_after_login');
+  location.replace(next);
+}
+</script>
+</body>
+</html>

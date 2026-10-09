@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About | Her Accessori Wholesale</title>
+<link rel="icon" href="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .about-hero { text-align: center; padding: 56px 20px 24px; }
+  .about-hero h1 { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 600; line-height: 1.1; }
+  .about-hero .kicker { color: var(--accent); letter-spacing: 3px; font-size: 13px; text-transform: uppercase; }
+  .about-grid { max-width: 920px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 38px; align-items: center; padding: 30px 20px 10px; }
+  @media (max-width: 760px) {
+    .about-grid { grid-template-columns: 1fr; gap: 24px; padding: 20px 18px 0; }
+    .about-hero { padding: 36px 18px 16px; }
+    .about-hero h1 { font-size: 30px; }
+    .about-text h2 { font-size: 26px; }
+    .about-text p { font-size: 15px; line-height: 1.7; }
+    .about-photo { width: min(300px, 82%); margin: 0 auto; display: block; }
+    .value-cards { padding: 0 16px; }
+  }
+  .about-photo { border-radius: 22px; border: 1px solid var(--line); width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: top; }
+  .about-text h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 14px; }
+  .about-text p { color: var(--muted); font-size: 16px; line-height: 1.8; margin-bottom: 14px; }
+  .ceo-name { color: var(--text); font-weight: 600; }
+  .value-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 920px; margin: 26px auto 0; padding: 0 20px; }
+  @media (max-width: 760px) { .value-cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <a href="index.html" class="brand"><img class="logo-img" src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png" alt="Her Accessori Wholesale logo">Her <span class="dot">Accessori</span> <span style="font-size:13px;color:var(--muted)">· wholesale</span></a>
+    <nav class="main">
+      <a href="index.html">Wholesale</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="hbtns">
+      <select class="currency-select" id="curSel" title="Currency"></select>
+      <button class="theme-toggle" id="themeToggle" title="Switch to black mode">🌙</button>
+      <button class="cart-btn" id="cartBtn" title="Your cart">🛍️<span class="cart-count">0</span></button>
+      <button class="menu-btn" id="menuBtn" title="Menu">☰</button>
+      <button class="profile-btn" id="profileBtn" title="Your profile, cart and orders">👤</button>
+    </div>
+  </div>
+  <div class="menu-panel" id="menuPanel">
+    <nav>
+      <a href="index.html">Wholesale</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="menu-controls"></div>
+  </div>
+</header>
+
+<section class="about-hero">
+  <div class="kicker">The supply arm behind the boutique</div>
+  <h1>Why we wholesale</h1>
+</section>
+
+<section class="about-grid">
+  <img class="about-photo" src="https://base44.app/api/apps/6abb9d8658ca4f3d10f85c7a/files/mp/public/6abb9d8658ca4f3d10f85c7a/5bc099745_cynthia_portrait2.jpg" alt="Cynthia Wambui Kimani, founder of Her Accessori">
+  <div class="about-text">
+    <h2>Boutique taste, reseller prices</h2>
+    <p>Her Accessori Wholesale grew out of the <span class="ceo-name">Her Accessori</span> boutique, founded by <span class="ceo-name">Cynthia Wambui Kimani</span>. Sourcing delicate, well-chosen pieces for our own shelves taught us something: small shop owners want the same taste, at prices that leave room to resell.</p>
+    <p>So we opened the supply side. We source jewelry and perfume in dozens and bulk packs, price them for resale, and deliver them straight to small shops. You focus on your customers. We keep your shelves stocked.</p>
+    <p>Every lot is chosen with the same eye the boutique is known for. If it isn't good enough for our shelves, it doesn't reach yours.</p>
+  </div>
+</section>
+
+<section class="value-cards">
+  <div class="cat-card"><div class="cat-ico">💫</div><h3>Curated taste</h3><p style="color:var(--muted);font-size:13px;margin-top:6px">Boutique-quality picks, chosen by Cynthia's team</p></div>
+  <div class="cat-card"><div class="cat-ico">📦</div><h3>Small-shop friendly</h3><p style="color:var(--muted);font-size:13px;margin-top:6px">Low minimums and dozens, so you can start small</p></div>
+  <div class="cat-card"><div class="cat-ico">🤝</div><h3>Delivered with care</h3><p style="color:var(--muted);font-size:13px;margin-top:6px">Free local delivery, pay on arrival, stress-free</p></div>
+</section>
+
+<footer>
+  <div class="foot">
+    <div>
+      <h4>Her <span style="color:var(--accent)">Accessori</span> Wholesale</h4>
+      <p>Jewelry &amp; perfume in bulk,<br>for small shops.</p>
+    </div>
+    <div>
+      <h4>Wholesale</h4>
+      <p><a href="index.html">Wholesale lots</a><br><a href="reviews.html">Reviews</a><br><a href="index.html#delivery">Supply terms</a></p>
+    </div>
+    <div>
+      <h4>Get in touch</h4>
+      <p><a href="mailto:hello@heraccessori.shop">hello@heraccessori.shop</a><br>Rosslyn · Runda · Ruaka · Countrywide</p>
+      <p class="fine">© 2026 Her Accessori Wholesale. Founded by Cynthia Wambui Kimani.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

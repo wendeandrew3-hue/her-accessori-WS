@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reviews | Her Accessori Wholesale</title>
+<link rel="icon" href="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .rev-wrap { max-width: 860px; margin: 0 auto; padding: 54px 20px 30px; text-align: center; }
+  .rev-wrap h1 { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 600; }
+  .rev-wrap .kicker { color: var(--accent); letter-spacing: 3px; font-size: 13px; text-transform: uppercase; margin-bottom: 10px; }
+  .rev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; text-align: left; margin-top: 34px; }
+  @media (max-width: 760px) { .rev-grid { grid-template-columns: 1fr; } }
+  .rev-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+  .rev-stars { color: #c9a227; letter-spacing: 2px; font-size: 15px; }
+  .rev-name { font-weight: 600; margin-top: 8px; }
+  .rev-text { color: var(--muted); font-size: 14.5px; line-height: 1.7; margin-top: 6px; }
+  .rev-form { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 30px; margin: 40px auto 0; text-align: left; }
+  .star-pick { display: flex; gap: 6px; font-size: 26px; cursor: pointer; margin: 8px 0 4px; }
+  .star-pick span { transition: transform .15s; }
+  .star-pick span.on { color: #c9a227; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <a href="index.html" class="brand"><img class="logo-img" src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png" alt="Her Accessori Wholesale logo">Her <span class="dot">Accessori</span> <span style="font-size:13px;color:var(--muted)">&middot; wholesale</span></a>
+    <nav class="main">
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="hbtns">
+      <select class="currency-select" id="curSel" title="Currency"></select>
+      <button class="theme-toggle" id="themeToggle" title="Switch to black mode">🌙</button>
+      <button class="cart-btn" id="cartBtn" title="Your cart">🛍️<span class="cart-count">0</span></button>
+      <button class="menu-btn" id="menuBtn" title="Menu">☰</button>
+      <button class="profile-btn" id="profileBtn" title="Your profile, cart and orders">👤</button>
+    </div>
+  </div>
+  <div class="menu-panel" id="menuPanel">
+    <nav>
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="menu-controls"></div>
+  </div>
+</header>
+
+<section class="rev-wrap">
+  <div class="kicker">What shop owners say</div>
+  <h1>Reviews</h1>
+  <p style="color:var(--muted)">Real words from real shop owners, verified before they appear here.</p>
+
+  <div class="rev-grid" id="revGrid"></div>
+
+  <div class="rev-form" id="revFormBox">
+    <h2 class="serif" style="font-size:28px;margin-bottom:6px">Share your experience</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Stocked something your customers loved? Tell other shop owners. Reviews are checked before going live.</p>
+    <div class="f-group"><label>Your name</label><input id="revName" type="text" maxlength="80" placeholder="How should we call you?"></div>
+    <div class="f-group"><label>Your rating</label>
+      <div class="star-pick" id="starPick">
+        <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+      </div>
+    </div>
+    <div class="f-group"><label>Your review</label><textarea id="revText" maxlength="600" rows="4" placeholder="What did you buy, and how did you love it?"></textarea></div>
+    <div class="msg ok" id="revThanks" style="display:none">Thank you! Your review was sent to the boutique for verification. 🌸</div>
+    <button class="btn-main" id="sendRev">Send my review</button>
+  </div>
+</section>
+
+<footer>
+  <div class="foot">
+    <div>
+      <h4>Her <span style="color:var(--accent)">Accessori</span></h4>
+      <p>Jewelry &amp; perfume in bulk,<br>for small shops.</p>
+    </div>
+    <div>
+      <h4>Wholesale</h4>
+      <p><a href="index.html">Shop</a><br><a href="about.html">About</a><br><a href="index.html#delivery">Delivery</a></p>
+    </div>
+    <div>
+      <h4>Get in touch</h4>
+      <p><a href="mailto:hello@heraccessori.shop">hello@heraccessori.shop</a><br>Rosslyn · Runda · Ruaka</p>
+      <p class="fine">© 2026 Her Accessori Wholesale. Founded by Cynthia Wambui Kimani.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+let rating = 5;
+const stars = document.querySelectorAll('#starPick span');
+function paintStars() { stars.forEach((s, i) => s.classList.toggle('on', i < rating)); }
+stars.forEach(s => s.onclick = () => { rating = Number(s.dataset.v); paintStars(); });
+paintStars();
+
+async function loadReviews() {
+  const grid = document.getElementById('revGrid');
+  try {
+    const r = await fetch(API + '/hwReviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'listApproved' }) });
+    const j = await r.json();
+    const list = j.reviews || [];
+    if (!list.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="big serif">No reviews yet</div><p>Be the first to share your experience below.</p></div>';
+      return;
+    }
+    grid.innerHTML = list.map(v => `
+      <div class="rev-card">
+        <div class="rev-stars">${'★'.repeat(v.rating)}${'☆'.repeat(5 - v.rating)}</div>
+        <div class="rev-name">${v.name}</div>
+        <div class="rev-text">${v.comment}</div>
+      </div>`).join('');
+  } catch (e) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><p>Could not load reviews right now.</p></div>';
+  }
+}
+
+document.getElementById('sendRev').onclick = async () => {
+  const name = document.getElementById('revName').value.trim();
+  const comment = document.getElementById('revText').value.trim();
+  if (!name || !comment) { toast('Please add your name and a few words.'); return; }
+  const btn = document.getElementById('sendRev'); btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch(API + '/hwReviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'submit', name, rating, comment }) });
+    const j = await r.json();
+    if (j.ok) {
+      document.getElementById('revThanks').style.display = 'block';
+      document.getElementById('revName').value = ''; document.getElementById('revText').value = '';
+      rating = 5; paintStars();
+    } else { toast(j.error || 'Could not send.'); }
+  } catch (e) { toast('Connection problem. Try again.'); }
+  btn.disabled = false; btn.textContent = 'Send my review';
+};
+loadReviews();
+</script>
+</body>
+</html>

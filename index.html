@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Her Accessori Wholesale | Jewelry &amp; perfume in bulk for your shop</title>
+<link rel="icon" href="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <a href="index.html" class="brand"><img class="logo-img" src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png" alt="Her Accessori Wholesale logo">Her <span class="dot">Accessori</span> <span style="font-size:13px;color:var(--muted)">· wholesale</span></a>
+    <nav class="main">
+      <a href="#categories">Categories</a>
+      <a href="#shop">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="#delivery">Supply terms</a>
+    </nav>
+    <div class="hbtns">
+      <select class="currency-select" id="curSel" title="Currency"></select>
+      <button class="theme-toggle" id="themeToggle" title="Switch to black mode">🌙</button>
+      <button class="cart-btn" id="cartBtn" title="Your cart">🛍️<span class="cart-count">0</span></button>
+      <button class="menu-btn" id="menuBtn" title="Menu">☰</button>
+      <button class="profile-btn" id="profileBtn" title="Your profile, cart and orders">👤</button>
+    </div>
+  </div>
+  <div class="menu-panel" id="menuPanel">
+    <nav>
+      <a href="#categories">Categories</a>
+      <a href="#shop">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="#delivery">Supply terms</a>
+    </nav>
+    <div class="menu-controls"></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="slides" id="slides">
+    <img src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/1f6e6c437_generated_image.png" class="on" alt="Gold necklaces on lavender silk">
+    <img src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/02f72a592_generated_image.png" alt="Layered gold bracelets">
+    <img src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/df4008812_generated_image.png" alt="Anklets on lavender satin">
+    <img src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/bf056d0f2_generated_image.png" alt="Boutique jewelry display">
+  </div>
+  <div class="hero-tint"></div>
+  <div class="hero-inner">
+    <div class="hero-kicker">Her Accessori Wholesale</div>
+    <h1>Stock your shop in jewelry &amp; perfume.</h1>
+    <p class="sub">Dozens and bulk packs at reseller prices, curated for small shops. Free delivery to shops in Rosslyn, Runda and Ruaka. Pay on delivery.</p>
+    <button class="hero-cta" onclick="document.getElementById('shop').scrollIntoView()">Browse wholesale lots</button>
+  </div>
+</section>
+
+<section class="section" id="categories">
+  <h2 class="sec-title serif">Shop by category</h2>
+  <p class="sec-sub">Bulk lines, one place</p>
+  <div class="cat-grid" id="catGrid">
+    <div class="cat-card sel" data-cat="all"><div class="cat-ico">✨</div><h3>All</h3></div>
+    <div class="cat-card" data-cat="Ear Wear (dozens)"><div class="cat-ico">🌸</div><h3>Ear Wear (dozens)</h3></div>
+    <div class="cat-card" data-cat="Neck Wear (dozens)"><div class="cat-ico">📿</div><h3>Neck Wear (dozens)</h3></div>
+    <div class="cat-card" data-cat="Arm Wear &amp; Bangles (dozens)"><div class="cat-ico">💫</div><h3>Arm Wear &amp; Bangles</h3></div>
+    <div class="cat-card" data-cat="Anklets (dozens)"><div class="cat-ico">🕊️</div><h3>Anklets (dozens)</h3></div>
+    <div class="cat-card" data-cat="Perfume Oils (bulk)"><div class="cat-ico">🧴</div><h3>Perfume Oils (bulk)</h3></div>
+    <div class="cat-card" data-cat="Designer Perfumes (bulk)"><div class="cat-ico">💐</div><h3>Designer Perfumes</h3></div>
+    <div class="cat-card" data-cat="Attars &amp; Roll-ons (bulk)"><div class="cat-ico">🌙</div><h3>Attars &amp; Roll-ons</h3></div>
+    <div class="cat-card" data-cat="Display &amp; Packaging"><div class="cat-ico">📦</div><h3>Display &amp; Packaging</h3></div>
+  </div>
+</section>
+
+<section class="section" id="shop" style="padding-top:10px">
+  <h2 class="sec-title serif" id="shopTitle">The wholesale floor</h2>
+  <p class="sec-sub" id="shopSub">Fresh lots added as stock arrives</p>
+  <div class="prod-grid" id="prodGrid">
+    <div class="empty-state">
+      <div class="big serif">The floor is being stocked</div>
+      <p>New wholesale lots are on their way. Check back soon, or browse a category above.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="delivery">
+  <h2 class="sec-title serif">Supply terms</h2>
+  <p class="sec-sub">Built for small shops, priced for resellers</p>
+  <div class="cat-grid" style="margin-top:34px">
+    <div class="cat-card"><div class="cat-ico">🚚</div><h3>Free to shops in Rosslyn, Runda &amp; Ruaka</h3><p style="color:var(--muted);font-size:13px;margin-top:6px">Stock delivered to your shop at no cost. Countrywide bulk by arrangement.</p></div>
+    <div class="cat-card"><div class="cat-ico">📲</div><h3>Pay on delivery</h3><p style="color:var(--muted);font-size:13px;margin-top:6px">M-Pesa or mobile money when your stock arrives. No payment upfront.</p></div>
+    <div class="cat-card"><div class="cat-ico">📦</div><h3>Dozens &amp; bulk packs</h3><p style="color:var(--muted);font-size:13px;margin-top:6px">Prices shown are per pack. Low minimums so small shops can start small.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot">
+    <div>
+      <h4>Her <span style="color:var(--accent)">Accessori</span> Wholesale</h4>
+      <p>Jewelry &amp; perfume in bulk,<br>for small shops.</p>
+    </div>
+    <div>
+      <h4>Wholesale</h4>
+      <p><a href="#categories">Categories</a><br><a href="#shop">Wholesale lots</a><br><a href="about.html">About</a><br><a href="reviews.html">Reviews</a><br><a href="#delivery">Supply terms</a></p>
+    </div>
+    <div>
+      <h4>Get in touch</h4>
+      <p><a href="mailto:hello@heraccessori.shop">hello@heraccessori.shop</a><br>
+      <!-- FILL IN: business phone / WhatsApp for wholesale orders -->
+      Rosslyn · Runda · Ruaka · Countrywide</p>
+      <p class="fine">Prices in USD per pack, converted live to your currency. © 2026 Her Accessori Wholesale.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+/* hero slideshow */
+const slides = document.querySelectorAll('#slides img');
+let si = 0;
+setInterval(() => {
+  slides[si].classList.remove('on');
+  si = (si + 1) % slides.length;
+  slides[si].classList.add('on');
+}, 4200);
+
+/* categories */
+let currentCat = 'all';
+document.querySelectorAll('.cat-card[data-cat]').forEach(c => {
+  c.onclick = () => {
+    document.querySelectorAll('.cat-card').forEach(x => x.classList.remove('sel'));
+    c.classList.add('sel');
+    currentCat = c.dataset.cat;
+    document.getElementById('shopTitle').textContent = currentCat === 'all' ? 'The wholesale floor' : c.querySelector('h3').textContent;
+    render();
+  };
+});
+
+/* products */
+let PRODUCTS = [];
+async function load() {
+  try {
+    const r = await fetch(API + '/hwShop', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'list' }) });
+    const j = await r.json();
+    PRODUCTS = j.products || [];
+    render();
+  } catch (e) { /* keep empty state */ }
+}
+function render() {
+  const grid = document.getElementById('prodGrid');
+  const list = currentCat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === currentCat);
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="big serif">The floor is being stocked</div><p>New wholesale lots are on their way. Check back soon.</p></div>';
+    return;
+  }
+  grid.innerHTML = list.map(p => `
+    <div class="p-card">
+      <img class="p-img" src="${p.image}" alt="${p.name}" loading="lazy">
+      <div class="p-body">
+        <div class="p-name">${p.name}</div>
+        <div class="p-desc">${p.description || ''}</div>
+        <div class="p-row">
+          <span class="p-price" data-usd="${p.priceUSD}"></span>
+          <button class="add-btn" onclick='addToCart(${JSON.stringify({ id: p.id, name: p.name, priceUSD: p.priceUSD, image: p.image }).replace(/'/g, "&#39;")})'>Add to cart</button>
+        </div>
+      </div>
+    </div>`).join('');
+  refreshPrices();
+}
+load();
+</script>
+</body>
+</html>

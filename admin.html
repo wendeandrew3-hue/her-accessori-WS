@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin | Her Accessori Wholesale</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .admin-grid { display: grid; grid-template-columns: 380px 1fr; gap: 30px; align-items: start; }
+  @media (max-width: 860px) { .admin-grid { grid-template-columns: 1fr; } }
+  .mini-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-bottom: 18px; }
+  .mini-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 24px; margin-bottom: 12px; }
+  .img-preview { width: 100%; aspect-ratio: 1; max-height: 260px; object-fit: cover; border-radius: 14px; border: 1px solid var(--line); margin-top: 10px; display: none; }
+  .order-table, .prod-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .order-table th, .order-table td, .prod-table th, .prod-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .prod-table img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; }
+  .small-btn { border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 999px; padding: 7px 14px; font-size: 13px; }
+  .small-btn.warn { color: #a4232b; border-color: #e6b3b6; }
+  .stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .stat { flex: 1; min-width: 120px; background: var(--lav-mist); border: 1px solid var(--line); border-radius: 16px; padding: 16px; text-align: center; }
+  .stat .n { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; }
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <a href="index.html" class="brand"><img class="logo-img" src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png" alt="logo">Her <span class="dot">Accessori</span> <span style="font-size:13px;color:var(--muted)">· wholesale admin</span></a>
+    <nav class="main"></nav>
+    <div class="hbtns">
+      <select class="currency-select" id="curSel"></select>
+      <button class="theme-toggle" id="themeToggle">🌙</button>
+      <button class="menu-btn" id="menuBtn" title="Menu">☰</button>
+    </div>
+  </div>
+  <div class="menu-panel" id="menuPanel">
+    <nav>
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="menu-controls"></div>
+  </div>
+</header>
+
+<div class="page page-wide" id="loginPane">
+  <div class="card" style="max-width:440px;margin:0 auto">
+    <h1>Admin access</h1>
+    <p class="sub">Enter the admin password to manage the wholesale store.</p>
+    <div class="msg err" id="loginMsg" style="display:none"></div>
+    <div class="f-group"><label>Password</label><input id="adminPass" type="password" placeholder="••••••••"></div>
+    <button class="btn-main" id="adminLogin">Unlock admin</button>
+  </div>
+</div>
+
+<div class="page page-wide" id="adminPane" style="display:none">
+  <div class="stat-row">
+    <div class="stat"><div class="n" id="statProds">0</div><div style="font-size:13px;color:var(--muted)">Wholesale lots</div></div>
+    <div class="stat"><div class="n" id="statOrders">0</div><div style="font-size:13px;color:var(--muted)">Orders</div></div>
+    <div class="stat"><div class="n" id="statPending">0</div><div style="font-size:13px;color:var(--muted)">Pending dispatch</div></div>
+    <div class="stat"><div class="n" id="statRevPending">0</div><div style="font-size:13px;color:var(--muted)">Reviews to verify</div></div>
+  </div>
+
+  <div class="admin-grid">
+    <div>
+      <div class="mini-card">
+        <h3>Add a wholesale lot</h3>
+        <div class="f-group"><label>Lot name</label><input id="pName" type="text" placeholder="e.g. Statement Earrings - 12-pair dozen"></div>
+        <div class="f-group"><label>Category</label>
+          <select id="pCat">
+            <option>Ear Wear (dozens)</option>
+            <option>Neck Wear (dozens)</option>
+            <option>Arm Wear &amp; Bangles (dozens)</option>
+            <option>Anklets (dozens)</option>
+            <option>Perfume Oils (bulk)</option>
+            <option>Designer Perfumes (bulk)</option>
+            <option>Attars &amp; Roll-ons (bulk)</option>
+            <option>Display &amp; Packaging</option>
+          </select>
+        </div>
+        <div class="f-group"><label>Price per pack (USD)</label><input id="pPrice" type="number" step="0.01" min="0.5" placeholder="24.99"></div>
+        <div class="f-group"><label>Description</label><textarea id="pDesc" placeholder="e.g. Mixed statement pairs, anti-tarnish steel. Price is per dozen."></textarea></div>
+        <div class="f-group"><label>Lot photo</label><input id="pImg" type="file" accept="image/*" style="padding:9px"></div>
+        <img class="img-preview" id="imgPrev" alt="preview">
+        <div class="msg ok" id="saveMsg" style="display:none">Lot saved ✓</div>
+        <button class="btn-main" id="saveProd">Publish to wholesale store</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="mini-card">
+        <h3>Wholesale lots</h3>
+        <table class="prod-table" id="prodTable"><thead><tr><th></th><th>Name</th><th>Category</th><th>Price (USD)</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="mini-card">
+        <h3>Orders</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Set status to <strong>Dispatched</strong> to release the customer's invoice.</p>
+        <table class="order-table" id="orderTable"><thead><tr><th>Ref</th><th>Customer</th><th>Items</th><th>Status</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="mini-card">
+        <h3>Reviews</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:10px">New shop-owner reviews arrive as <strong>pending</strong>. Verify them to make them live on the Reviews page, or reject them.</p>
+        <table class="order-table" id="revTable"><thead><tr><th>Name</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+let PASSWORD = sessionStorage.getItem('hw_admin') || '';
+
+async function api(payload) {
+  const r = await fetch(API + '/hwAdmin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, password: PASSWORD }) });
+  return r.json();
+}
+
+document.getElementById('adminLogin').onclick = async () => {
+  PASSWORD = document.getElementById('adminPass').value;
+  const j = await api({ action: 'listAll' });
+  if (!j.ok) {
+    const m = document.getElementById('loginMsg'); m.textContent = j.error || 'Wrong password.'; m.style.display = 'block';
+    return;
+  }
+  sessionStorage.setItem('hw_admin', PASSWORD);
+  document.getElementById('loginPane').style.display = 'none';
+  document.getElementById('adminPane').style.display = 'block';
+  render(j);
+};
+
+/* image compression -> base64 */
+let imageData = '';
+document.getElementById('pImg').onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 700;
+      const sc = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * sc); cv.height = Math.round(img.height * sc);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      imageData = cv.toDataURL('image/jpeg', 0.8);
+      const prev = document.getElementById('imgPrev');
+      prev.src = imageData; prev.style.display = 'block';
+    };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(file);
+};
+
+document.getElementById('saveProd').onclick = async () => {
+  const name = document.getElementById('pName').value.trim();
+  const price = parseFloat(document.getElementById('pPrice').value);
+  if (!name || !price) { alert('Name and price are required.'); return; }
+  if (!imageData) { alert('Please choose a lot photo.'); return; }
+  const btn = document.getElementById('saveProd'); btn.disabled = true; btn.textContent = 'Publishing…';
+  const j = await api({ action: 'saveProduct', product: {
+    name, category: document.getElementById('pCat').value, priceUSD: price,
+    description: document.getElementById('pDesc').value.trim(), image: imageData
+  }});
+  btn.disabled = false; btn.textContent = 'Publish to wholesale store';
+  if (j.ok) {
+    document.getElementById('saveMsg').style.display = 'block';
+    setTimeout(() => document.getElementById('saveMsg').style.display = 'none', 2500);
+    ['pName','pPrice','pDesc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('pImg').value = '';
+    document.getElementById('imgPrev').style.display = 'none';
+    imageData = '';
+    load();
+  } else alert(j.error || 'Could not save.');
+};
+
+async function load() {
+  const j = await api({ action: 'listAll' });
+  if (j.ok) render(j);
+  loadReviews();
+}
+
+async function loadReviews() {
+  const r = await fetch(API + '/hwReviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'listAll', password: PASSWORD }) });
+  const j = await r.json();
+  if (!j.ok) return;
+  const revs = j.reviews || [];
+  const pend = revs.filter(v => v.status === 'pending');
+  document.getElementById('statRevPending').textContent = pend.length;
+  document.querySelector('#revTable tbody').innerHTML = revs.map(v => {
+    const stars = '★'.repeat(v.rating) + '☆'.repeat(5 - v.rating);
+    const actions = v.status === 'pending'
+      ? `<button class="small-btn" onclick="revAction('${v.id}','approve')">Verify → publish</button> <button class="small-btn warn" onclick="revAction('${v.id}','reject')">Reject</button>`
+      : `<button class="small-btn warn" onclick="revAction('${v.id}','delete')">Remove</button>`;
+    return `<tr>
+      <td>${v.name}<br><span style="font-size:12px;color:var(--muted)">${new Date(v.created_date).toLocaleDateString()}</span></td>
+      <td><span style="color:#c9a227">${stars}</span></td>
+      <td style="max-width:340px">${v.comment}</td>
+      <td><span class="status-pill">${v.status}</span></td>
+      <td>${actions}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" style="color:var(--muted)">No reviews yet. Shop-owner reviews will appear here for verification.</td></tr>';
+}
+
+window.revAction = async (id, act) => {
+  await fetch(API + '/hwReviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: act, id, password: PASSWORD }) });
+  loadReviews();
+};
+
+function render(j) {
+  document.getElementById('statProds').textContent = j.products.length;
+  document.getElementById('statOrders').textContent = j.orders.length;
+  document.getElementById('statPending').textContent = j.orders.filter(o => o.status !== 'dispatched' && o.status !== 'delivered').length;
+
+  document.querySelector('#prodTable tbody').innerHTML = j.products.map(p => `
+    <tr>
+      <td><img src="${p.image}" alt=""></td>
+      <td>${p.name}</td>
+      <td>${p.category}</td>
+      <td>$${Number(p.priceUSD).toFixed(2)}</td>
+      <td><button class="small-btn warn" onclick="delProd('${p.id}')">Delete</button></td>
+    </tr>`).join('') || '<tr><td colspan="5" style="color:var(--muted)">No lots yet. Add the first one on the left.</td></tr>';
+
+  document.querySelector('#orderTable tbody').innerHTML = j.orders.map(o => {
+    const items = JSON.parse(o.items || '[]');
+    const next = o.status === 'pending' ? `<button class="small-btn" onclick="setStatus('${o.id}','dispatched')">Mark dispatched → send invoice</button>` : '';
+    return `<tr>
+      <td><span class="ref">${o.reference}</span><br><span style="font-size:12px;color:var(--muted)">${new Date(o.created_date).toLocaleDateString()}</span></td>
+      <td>${o.customer_name}<br><span style="color:var(--muted)">${o.phone}</span><br><span style="color:var(--muted);font-size:12px">${o.address}, ${o.delivery_area}</span></td>
+      <td>${items.map(i => i.name + ' × ' + i.qty).join('<br>')}<br><strong style="margin-top:4px;display:inline-block">$${Number(o.total_usd).toFixed(2)}</strong></td>
+      <td><span class="status-pill">${o.status}</span></td>
+      <td>${next}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" style="color:var(--muted)">No orders yet.</td></tr>';
+}
+
+window.delProd = async (id) => {
+  if (!confirm('Delete this lot from the wholesale store?')) return;
+  await api({ action: 'deleteProduct', id });
+  load();
+};
+window.setStatus = async (id, status) => {
+  await api({ action: 'setOrderStatus', id, status });
+  load();
+};
+
+/* already unlocked this session? */
+if (PASSWORD) {
+  api({ action: 'listAll' }).then(j => {
+    if (j.ok) {
+      document.getElementById('loginPane').style.display = 'none';
+      document.getElementById('adminPane').style.display = 'block';
+      render(j);
+    }
+  });
+}
+</script>
+</body>
+</html>

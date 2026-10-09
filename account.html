@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your account | Her Accessori Wholesale</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <a href="index.html" class="brand"><img class="logo-img" src="https://media.base44.com/images/public/6abb9d8658ca4f3d10f85c7a/0ff64a871_generated_image.png" alt="Her Accessori Wholesale logo">Her <span class="dot">Accessori</span> <span style="font-size:13px;color:var(--muted)">&middot; wholesale</span></a>
+    <nav class="main">
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="hbtns">
+      <select class="currency-select" id="curSel" title="Currency"></select>
+      <button class="theme-toggle" id="themeToggle" title="Switch to black mode">🌙</button>
+      <button class="cart-btn" id="cartBtn" title="Your cart">🛍️<span class="cart-count">0</span></button>
+      <button class="menu-btn" id="menuBtn" title="Menu">☰</button>
+      <button class="profile-btn" id="profileBtn" title="Your profile, cart and orders">👤</button>
+    </div>
+  </div>
+  <div class="menu-panel" id="menuPanel">
+    <nav>
+      <a href="index.html">Wholesale</a>
+      <a href="about.html">About</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+    <div class="menu-controls"></div>
+  </div>
+</header>
+
+<div class="page page-wide">
+  <div class="card">
+    <h1 id="helloName">Your account</h1>
+    <p class="sub" id="helloEmail"></p>
+
+    <div class="tabs">
+      <button class="tab on" data-tab="cart" id="tabCart">🛍️ Cart</button>
+      <button class="tab" data-tab="orders">📦 Orders &amp; invoices</button>
+      <button class="tab" data-tab="settings">⚙️ Settings</button>
+      <button class="tab" onclick="logout()" style="margin-left:auto;color:#a4232b">Log out</button>
+    </div>
+
+    <!-- CART -->
+    <div id="pane-cart">
+      <div id="cartLines"></div>
+      <div class="total-row grand" style="display:none" id="cartTotalWrap"><span>Total</span><span id="cartTotal"></span></div>
+      <button class="btn-main" id="checkoutBtn" style="max-width:280px">Checkout</button>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="pane-orders" style="display:none">
+      <div id="orderList"><p style="color:var(--muted)">Loading your orders…</p></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="pane-settings" style="display:none">
+      <div class="f-group"><label>Full name</label><input id="sName" type="text"></div>
+      <div class="f-group"><label>Phone</label><input id="sPhone" type="tel"></div>
+      <div class="msg ok" id="sMsg" style="display:none">Saved ✓</div>
+      <button class="btn-main" id="saveBtn" style="max-width:280px">Save changes</button>
+      <p style="color:var(--muted);font-size:13px;margin-top:14px">Theme: use the 🌙 button top right to switch between lavender/white and black.</p>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+requireLogin();
+
+const u = me();
+document.getElementById('helloName').textContent = u && u.full_name ? 'Hello, ' + u.full_name.split(' ')[0] : 'Your account';
+document.getElementById('helloEmail').textContent = u ? u.email : '';
+document.getElementById('sName').value = u ? (u.full_name || '') : '';
+document.getElementById('sPhone').value = u ? (u.phone || '') : '';
+
+/* tabs + hash */
+function showTab(name) {
+  document.querySelectorAll('.tab[data-tab]').forEach(t => t.classList.toggle('on', t.dataset.tab === name));
+  ['cart','orders','settings'].forEach(p => document.getElementById('pane-' + p).style.display = p === name ? 'block' : 'none');
+  if (name === 'orders') loadOrders();
+}
+document.querySelectorAll('.tab[data-tab]').forEach(t => t.onclick = () => { showTab(t.dataset.tab); history.replaceState(null, '', '#' + t.dataset.tab); });
+if (location.hash) showTab(location.hash.slice(1));
+
+/* cart pane */
+function renderCart() {
+  const c = cart();
+  const el = document.getElementById('cartLines');
+  const wrap = document.getElementById('cartTotalWrap');
+  if (!c.length) {
+    el.innerHTML = '<p style="color:var(--muted)">Your cart is empty. <a href="index.html" style="color:var(--accent)">Browse the wholesale floor →</a></p>';
+    wrap.style.display = 'none';
+    document.getElementById('checkoutBtn').style.display = 'none';
+    return;
+  }
+  el.innerHTML = c.map((i, idx) => `
+    <div class="cart-line">
+      <img src="${i.image}" alt="">
+      <div style="flex:1">
+        <div class="p-name" style="font-size:18px">${i.name}</div>
+        <span class="p-price" data-usd="${i.priceUSD}"></span> × ${i.qty}
+      </div>
+      <div class="qty">
+        <button onclick="qty(${idx},-1)">−</button>
+        <span>${i.qty}</span>
+        <button onclick="qty(${idx},1)">+</button>
+      </div>
+    </div>`).join('');
+  const total = c.reduce((s, i) => s + i.priceUSD * i.qty, 0);
+  wrap.style.display = 'flex';
+  document.getElementById('cartTotal').dataset.usd = total;
+  refreshPrices();
+}
+window.qty = (idx, d) => {
+  const c = cart();
+  c[idx].qty += d;
+  if (c[idx].qty < 1) c.splice(idx, 1);
+  saveCart(c); renderCart();
+};
+document.getElementById('checkoutBtn').onclick = () => location.href = 'checkout.html';
+renderCart();
+
+/* orders pane */
+async function loadOrders() {
+  const el = document.getElementById('orderList');
+  try {
+    const r = await fetch(API + '/hwShop', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'myOrders', email: me().email }) });
+    const j = await r.json();
+    const orders = j.orders || [];
+    if (!orders.length) { el.innerHTML = '<p style="color:var(--muted)">No orders yet. Your order history and reference numbers will appear here.</p>'; return; }
+    el.innerHTML = orders.map(o => {
+      const items = JSON.parse(o.items || '[]');
+      const inv = o.status === 'dispatched' ? `
+        <div class="invoice-box">
+          <strong>Invoice for ${o.reference}</strong>
+          ${items.map(i => `<div class="total-row"><span>${i.name} × ${i.qty}</span><span data-usd="${i.priceUSD * i.qty}"></span></div>`).join('')}
+          <div class="total-row"><span>Delivery (${o.delivery_area})</span><span>${Number(o.delivery_fee) > 0 ? '' : 'Free'}${Number(o.delivery_fee) > 0 ? '' : ''}</span></div>
+          <div class="total-row grand"><span>Total</span><span data-usd="${o.total_usd}"></span></div>
+          <p style="margin-top:10px">${o.invoice_note || 'Payment on delivery via M-Pesa or mobile money.'}</p>
+          <p style="margin-top:6px;color:var(--muted)">Card payment link available on request.</p>
+        </div>` : '';
+      return `<div class="order-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <span class="ref">${o.reference}</span>
+          <span class="status-pill">${o.status}</span>
+        </div>
+        <p style="font-size:14px;color:var(--muted);margin:8px 0 4px">${new Date(o.created_date).toLocaleString()} · ${o.delivery_area || ''}</p>
+        <p style="font-size:14px">${items.map(i => i.name + ' × ' + i.qty).join(', ')}</p>
+        <div class="total-row grand" style="max-width:280px"><span>Total</span><span data-usd="${o.total_usd}"></span></div>
+        ${inv}
+      </div>`;
+    }).join('');
+    refreshPrices();
+  } catch (e) {
+    el.innerHTML = '<p style="color:var(--muted)">Could not load orders. Try again shortly.</p>';
+  }
+}
+
+/* settings pane */
+document.getElementById('saveBtn').onclick = async () => {
+  const r = await fetch(API + '/hwAuth', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'updateProfile', email: me().email, full_name: document.getElementById('sName').value.trim(), phone: document.getElementById('sPhone').value.trim() }) });
+  const j = await r.json();
+  if (j.ok) {
+    localStorage.setItem('hw_user', JSON.stringify({ email: me().email, full_name: document.getElementById('sName').value.trim(), phone: document.getElementById('sPhone').value.trim() }));
+    document.getElementById('sMsg').style.display = 'block';
+    setTimeout(() => document.getElementById('sMsg').style.display = 'none', 2000);
+  }
+};
+</script>
+</body>
+</html>
