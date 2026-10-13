@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimuSoko — Phones, Fair Prices, Nairobi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/">Simu<span>Soko</span></a>
+    <a class="cart-link" href="checkout.html">Cart <b id="cartN">0</b></a>
+  </div>
+</header>
+
+<section class="hero wrap">
+  <h1>Phones, <em>fair prices</em>, delivered.</h1>
+  <p>Genuine phones at Nairobi market prices. Pay by card online or M-Pesa on delivery.</p>
+  <a class="btn" href="#shop">Shop phones</a>
+</section>
+
+<div class="wrap trust">
+  <span class="chip">Genuine phones only</span>
+  <span class="chip">Card or M-Pesa</span>
+  <span class="chip">Nairobi delivery in 24-48 hrs</span>
+  <span class="chip">Free delivery over KSh 50,000</span>
+</div>
+
+<main class="wrap" id="shop">
+  <div class="bar" id="filters"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 SimuSoko · Nairobi, Kenya</div>
+    <div>Pay by card or M-Pesa · Call/WhatsApp: 0741 156 977</div>
+  </div>
+</footer>
+
+<script>
+const CART = {
+  get: () => JSON.parse(localStorage.getItem('simu_cart') || '{}'),
+  save: c => localStorage.setItem('simu_cart', JSON.stringify(c)),
+  count: () => Object.values(CART.get()).reduce((a, q) => a + q, 0)
+};
+
+let PRODUCTS = [];
+const GRADS = {
+  Tecno: 'linear-gradient(160deg,#0e4d64,#123b6b)', Infinix: 'linear-gradient(160deg,#123b6b,#252466)',
+  Redmi: 'linear-gradient(160deg,#3a2140,#6b2a3a)', Samsung: 'linear-gradient(160deg,#12396b,#0b5a63)',
+  OPPO: 'linear-gradient(160deg,#126b3f,#0b5a63)', Apple: 'linear-gradient(160deg,#33334d,#191924)',
+  Nokia: 'linear-gradient(160deg,#12396b,#3a4a6b)'
+};
+
+function renderGrid(list) {
+  document.getElementById('grid').innerHTML = list.map(p => `
+    <article class="prod">
+      <div class="phone" style="background:${GRADS[p.brand] || 'linear-gradient(160deg,#123b6b,#0b5a63)'}">
+        <div class="shell">
+          <div class="notch"></div>
+          <div class="brandmark">${p.brand}</div>
+        </div>
+      </div>
+      <div class="p-body">
+        <div class="p-tag">${p.tag}</div>
+        <div class="p-name">${p.brand} ${p.model}</div>
+        <div class="p-spec">${p.ram ? p.ram + 'GB RAM' + (p.storage ? ' · ' + p.storage + 'GB' : '') : 'Feature phone'}</div>
+        <div class="p-row">
+          <div class="p-price">KSh ${p.price.toLocaleString()}<small>In stock</small></div>
+          <button class="add" onclick="add('${p.id}')">Add</button>
+        </div>
+      </div>
+    </article>`).join('');
+}
+
+function add(id) {
+  const c = CART.get();
+  c[id] = Math.min(5, (c[id] || 0) + 1);
+  CART.save(c);
+  document.getElementById('cartN').textContent = CART.count();
+}
+
+fetch('/api/products').then(r => r.json()).then(d => {
+  PRODUCTS = d.products;
+  const brands = [...new Set(PRODUCTS.map(p => p.brand))];
+  const bar = document.getElementById('filters');
+  bar.innerHTML = `<button class="filt on" data-b="all">All</button>` +
+    brands.map(b => `<button class="filt" data-b="${b}">${b}</button>`).join('') +
+    `<button class="filt" data-b="under">Under KSh 20,000</button>`;
+  bar.addEventListener('click', e => {
+    if (!e.target.dataset.b) return;
+    bar.querySelectorAll('.filt').forEach(f => f.classList.remove('on'));
+    e.target.classList.add('on');
+    const b = e.target.dataset.b;
+    renderGrid(b === 'all' ? PRODUCTS : b === 'under' ? PRODUCTS.filter(p => p.price < 20000) : PRODUCTS.filter(p => p.brand === b));
+  });
+  renderGrid(PRODUCTS);
+});
+
+document.getElementById('cartN').textContent = CART.count();
+</script>
+</body>
+</html>

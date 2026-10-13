@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — SimuSoko</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/">Simu<span>Soko</span></a>
+    <a class="cart-link" href="/">Back to shop</a>
+  </div>
+</header>
+
+<div class="wrap" id="checkoutView">
+  <div class="page-head"><h1>Checkout</h1></div>
+  <div class="cols">
+    <form class="panel" id="form">
+      <div class="err" id="err"></div>
+      <h2>Delivery details</h2>
+      <div class="field"><label>Full name</label><input id="name" required placeholder="Jane Wanjiku"></div>
+      <div class="two">
+        <div class="field"><label>Phone (M-Pesa number)</label><input id="phone" required placeholder="07XX XXX XXX"></div>
+        <div class="field"><label>City / Area</label><input id="city" required placeholder="e.g. Westlands"></div>
+      </div>
+      <div class="field"><label>Delivery address</label><input id="address" required placeholder="Estate, street, house no."></div>
+
+      <h2 style="margin-top:8px">Payment</h2>
+      <div class="paybox">
+        <label class="pay-opt on" id="optCard">
+          <input type="radio" name="pay" value="card" checked>
+          <div><div class="t">Card (Visa / Mastercard)</div><div class="d">Pay now, online. Secure checkout.</div></div>
+        </label>
+        <label class="pay-opt" id="optMpesa">
+          <input type="radio" name="pay" value="mpesa">
+          <div><div class="t">M-Pesa on delivery</div><div class="d">Pay the rider when the phone arrives.</div></div>
+        </label>
+      </div>
+
+      <div id="cardFields">
+        <div class="field"><label>Card number</label><input id="cnum" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="23"></div>
+        <div class="field"><label>Name on card</label><input id="cname" placeholder="JANE WANJIKU"></div>
+        <div class="two">
+          <div class="field"><label>Expiry (MM/YY)</label><input id="cexp" inputmode="numeric" placeholder="09/28" maxlength="5"></div>
+          <div class="field"><label>CVV</label><input id="ccvv" inputmode="numeric" placeholder="123" maxlength="4"></div>
+        </div>
+      </div>
+
+      <button class="btn" id="payBtn" type="submit" style="width:100%">Place order</button>
+    </form>
+
+    <aside class="panel">
+      <h2>Your order</h2>
+      <div class="lines" id="lines"></div>
+      <div class="line"><span>Subtotal</span><b id="sub"></b></div>
+      <div class="line"><span>Delivery</span><b id="del"></b></div>
+      <div class="tot"><span>Total</span><span id="tot"></span></div>
+      <p style="color:var(--mut);font-size:.78rem;margin-top:14px">Genuine phones. Card details are transmitted securely and never stored. Demo mode is on until gateway keys are configured.</p>
+    </aside>
+  </div>
+</div>
+
+<div class="wrap done" id="doneView" style="display:none">
+  <h2 id="doneTitle">Order received</h2>
+  <div class="ref" id="ref"></div>
+  <p id="doneMsg"></p>
+  <a class="btn" href="/">Back to shop</a>
+</div>
+
+<script>
+const CART = {
+  get: () => JSON.parse(localStorage.getItem('simu_cart') || '{}'),
+  clear: () => localStorage.removeItem('simu_cart')
+};
+let PRODUCTS = [], SUB = 0;
+
+function money(n) { return 'KSh ' + n.toLocaleString(); }
+
+function renderSummary() {
+  const cart = CART.get();
+  const rows = Object.entries(cart).map(([id, qty]) => {
+    const p = PRODUCTS.find(p => p.id === id);
+    if (!p) return '';
+    return `<div class="line"><span>${p.brand} ${p.model} × ${qty}</span><b>${money(p.price * qty)}</b></div>`;
+  }).join('');
+  document.getElementById('lines').innerHTML = rows || '<div class="line"><span>Cart is empty</span></div>';
+  SUB = Object.entries(cart).reduce((a, [id, qty]) => {
+    const p = PRODUCTS.find(p => p.id === id);
+    return a + (p ? p.price * qty : 0);
+  }, 0);
+  const del = SUB >= 50000 ? 0 : 250;
+  document.getElementById('sub').textContent = money(SUB);
+  document.getElementById('del').textContent = del ? money(del) : 'Free';
+  document.getElementById('tot').textContent = money(SUB + del);
+}
+
+document.querySelectorAll('.pay-opt').forEach(o => o.addEventListener('change', () => {
+  document.querySelectorAll('.pay-opt').forEach(x => x.classList.remove('on'));
+  o.classList.add('on');
+  document.getElementById('cardFields').style.display = o.querySelector('input').value === 'card' ? '' : 'none';
+}));
+
+document.getElementById('cnum').addEventListener('input', e => {
+  const v = e.target.value.replace(/\D/g, '').slice(0, 19);
+  e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+});
+document.getElementById('cexp').addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+  e.target.value = v.length > 2 ? v.slice(0, 2) + '/' + v.slice(2) : v;
+});
+
+document.getElementById('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = document.getElementById('err');
+  err.style.display = 'none';
+  const payment = document.querySelector('input[name=pay]:checked').value;
+  const body = {
+    customer: {
+      name: document.getElementById('name').value,
+      phone: document.getElementById('phone').value,
+      city: document.getElementById('city').value,
+      address: document.getElementById('address').value
+    },
+    items: Object.entries(CART.get()).map(([id, qty]) => ({ id, qty })),
+    payment,
+    card: payment === 'card' ? {
+      number: document.getElementById('cnum').value,
+      name: document.getElementById('cname').value,
+      expiry: document.getElementById('cexp').value,
+      cvv: document.getElementById('ccvv').value
+    } : null
+  };
+  document.getElementById('payBtn').disabled = true;
+  try {
+    const r = await fetch('/api/checkout', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    });
+    const d = await r.json();
+    if (!r.ok) { err.textContent = d.error; err.style.display = 'block'; return; }
+    CART.clear();
+    document.getElementById('checkoutView').style.display = 'none';
+    const dv = document.getElementById('doneView');
+    dv.style.display = 'block';
+    document.getElementById('ref').textContent = d.reference;
+    document.getElementById('doneTitle').textContent = payment === 'card' ? 'Payment successful' : 'Order received';
+    document.getElementById('doneMsg').textContent = payment === 'card'
+      ? (d.demo ? 'Your card was authorised (demo mode). We will call to confirm delivery details.' : 'Your card was charged. We will call to confirm delivery details.')
+      : 'Pay the rider via M-Pesa when your phone arrives. Keep your reference for any questions.';
+  } catch {
+    err.textContent = 'Network error, please try again.';
+    err.style.display = 'block';
+  } finally {
+    document.getElementById('payBtn').disabled = false;
+  }
+});
+
+fetch('/api/products').then(r => r.json()).then(d => { PRODUCTS = d.products; renderSummary(); });
+</script>
+</body>
+</html>

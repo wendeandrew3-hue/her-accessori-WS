@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — SimuSoko</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Simu<span>Soko</span></a><span style="color:var(--mut);font-size:.8rem">Admin</span></div></header>
+
+<div class="wrap login-box panel" id="loginBox">
+  <h2>Admin login</h2>
+  <div class="field"><label>Password</label><input type="password" id="pass" placeholder="Admin password"></div>
+  <button class="btn" id="go" style="width:100%">Open orders</button>
+  <div class="err" id="err">Wrong password.</div>
+</div>
+
+<div class="wrap pad" id="adminBox" style="display:none">
+  <div class="page-head"><h1>Orders</h1></div>
+  <div class="panel" style="overflow-x:auto">
+    <table class="tbl" id="tbl">
+      <thead><tr><th>Ref</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+let PASS = '';
+function pill(s) {
+  const cls = s.startsWith('Paid') ? 'ok' : s === 'Delivered' ? 'ok' : s === 'Cancelled' ? 'warn' : 'warn';
+  return `<span class="pill ${cls}">${s}</span>`;
+}
+async function loadOrders() {
+  const r = await fetch('/api/orders', { headers: { 'x-admin-pass': PASS } });
+  if (!r.ok) { document.getElementById('err').style.display = 'block'; return; }
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('adminBox').style.display = 'block';
+  const d = await r.json();
+  document.getElementById('rows').innerHTML = d.orders.map(o => `
+    <tr>
+      <td><b>${o.id}</b><br><small style="color:var(--mut)">${new Date(o.created).toLocaleString('en-KE')}</small></td>
+      <td>${o.customer.name}<br><small style="color:var(--mut)">${o.customer.phone}<br>${o.customer.address}, ${o.customer.city}</small></td>
+      <td>${o.items.map(i => i.name + ' × ' + i.qty).join('<br>')}</td>
+      <td><b>KSh ${o.total.toLocaleString()}</b></td>
+      <td>${o.payment}${o.card ? '<br><small style="color:var(--mut)">' + o.card.brand + ' •••• ' + o.card.last4 + '</small>' : ''}</td>
+      <td>${pill(o.status)}<br>
+        <select class="sel" onchange="setStat('${o.id}', this.value)">
+          <option value="">Change…</option>
+          ${['Pending M-Pesa', 'Paid', 'Delivered', 'Cancelled'].map(s => `<option>${s}</option>`).join('')}
+        </select>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="6" style="color:var(--mut)">No orders yet.</td></tr>';
+}
+async function setStat(id, status) {
+  if (!status) return;
+  await fetch('/api/orders/' + id, {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json', 'x-admin-pass': PASS },
+    body: JSON.stringify({ status })
+  });
+  loadOrders();
+}
+document.getElementById('go').addEventListener('click', () => {
+  PASS = document.getElementById('pass').value;
+  loadOrders();
+});
+document.getElementById('pass').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('go').click(); });
+</script>
+</body>
+</html>
